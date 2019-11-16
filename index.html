@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const BALL_NUM = 100;
+    
+    // for (let i = 0; i < 10; i++) {
+    //     for (let j = 0; j < 10; j++) {
+    //         ctx.fillStyle = getColor();
+    //         ctx.fillRect(50 * i, 50 * j, 150, 100);
+    //     }
+    // }
+
+    // setInterval(main, 300); 
+
+    let balls = [];
+
+    for (let i = 0; i < BALL_NUM; i++) {
+        balls.push(new BallObject());
+    }
+
+    setInterval(() => { 
+        for (let i = 0; i < BALL_NUM; i++) {
+            balls[i].move();
+        }
+        // 背景を塗りつぶす処理
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = "rgba(8, 8, 12, 0.2)";
+        ctx.fillRect(0, 0, 400, 400);
+    }, 33);
+
+    // setInterval(ball.move, 300); ball.moveがglobalオブジェクトに登録されてしまう
+    
+
+    function BallObject() {
+        this.x = getRondomInt(400);
+        this.y = getRondomInt(400);
+        this.x_speed = getRondomInt(10) - 5;
+        this.y_speed = getRondomInt(10) - 5;
+        this.radius = getRondomInt(30);
+        this.color = getColor();
+        
+        this.move = function(){
+            // 移動スピードを閾値をまたいだら、反転させることで跳ね返りを表現している
+            if(this.x > 400 || this.x < 0 ){
+            // this.x_speed = this.x_speed * -1;
+            this.x_speed *= -1;
+            }
+            if(this.y > 400 || this.y < 0){
+            this.y_speed *= -1;
+            }
+
+            this.x = this.x + this.x_speed;
+            this.y = this.y + this.y_speed;
+            this.drawCircle(this.x, this.y, this.radius);
+        }
+
+        this.drawCircle = function(x, y, radius) {
+            ctx.globalCompositeOperation = "lighter";
+            ctx.beginPath();
+            ctx.fillStyle = this.color;
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            ctx.fill();   
+        }
+    }
+
+    // function main() {
+    //     for (let i = 0; i < 10; i++) {
+    //         x += 10;
+    //         y += 10;
+    //         let radius = getRondomInt(50);
+    //         drawCircle(x, y, radius);
+    //     }
+    // }
+
+    function getColor() {
+        const colorInt = 96;
+        let r = getRondomInt(colorInt);
+        let g = getRondomInt(colorInt);
+        let b = getRondomInt(colorInt);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function getRondomInt(max) {
+        let num = Math.random() * max;
+        return Math.floor(num);
+    }
+  </script>
+</body>
+</html>
